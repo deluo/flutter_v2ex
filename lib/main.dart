@@ -13,6 +13,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin  {
+  final String latestDataUrl = 'https://www.v2ex.com/api/topics/latest.json';
   final List<Tab> tabs = <Tab>[
     Tab(text: '全部',),
     Tab(text: '最热',),
@@ -38,19 +39,22 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin  {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        platform: TargetPlatform.iOS
+        platform: TargetPlatform.iOS,
       ),
       title: "v2ex",
       home: Scaffold(
         appBar: AppBar(title: Text("V2EX",style: TextStyle(color: Color.fromARGB(255, 36, 36, 6)),),centerTitle: true,
+          elevation: 0.0,
           backgroundColor: Color.fromARGB(255, 255, 235, 59),
           bottom: TabBar(
             tabs: tabs,
             controller: tabController,
             indicatorSize: TabBarIndicatorSize.label,
+            indicatorWeight: 2,
             indicatorColor: Color.fromARGB(255, 0, 0, 0),
             labelColor: Color.fromARGB(255, 34, 31, 8),
             labelStyle: TextStyle(fontWeight: FontWeight.w700),
+            unselectedLabelColor: Colors.black38,
           ),
           actions: <Widget>[
             IconButton(icon: Icon(Icons.search), onPressed: (){},padding: EdgeInsets.only(right: 10.0),)
@@ -59,7 +63,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin  {
         body: TabBarView(
           controller: tabController,
           children: <Widget>[
-            ContentList(),
+            ContentList(url:latestDataUrl),
             MsgList(),
             NodeList()
           ],

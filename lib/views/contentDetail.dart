@@ -54,11 +54,6 @@ class _ContentDetailState extends State<ContentDetail> with SingleTickerProvider
             ReplyList(id: widget.content['id'],)
           ],
         ),
-        // floatingActionButton: FloatingActionButton(
-        //   backgroundColor: Color.fromARGB(255, 255, 235, 59),
-        //   child: Icon(Icons.sms,),
-        //   onPressed: (null)
-        // )
       ),
     );
   }

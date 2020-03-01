@@ -12,10 +12,8 @@ class ReplyList extends StatefulWidget {
 }
 
 class _ReplyListState extends State<ReplyList> with AutomaticKeepAliveClientMixin {
-  List replyList = new List();
-  bool ifShow = false;
+  Future _future;
   bool showToTop = false;
-
   ScrollController scrollController;
 
   @override
@@ -36,12 +34,7 @@ class _ReplyListState extends State<ReplyList> with AutomaticKeepAliveClientMixi
         });
       }
     });
-    getReplies(widget.id).then((data){
-      setState(() {
-        ifShow = false;
-        replyList = data;
-      });
-    });
+    _future = getReplies(widget.id);
   }
 
   @override
@@ -51,15 +44,28 @@ class _ReplyListState extends State<ReplyList> with AutomaticKeepAliveClientMixi
   }
 
   Future getReplies(id) async{
-    setState(() {
-      ifShow = true;
-    });
     Dio dio = new Dio();
-    try{
-      Response res = await dio.get("https://www.v2ex.com/api/replies/show.json?topic_id=$id");
-      return res.data;
-    }catch(err){
-      print(err);
+    Response res = await dio.get("https://www.v2ex.com/api/replies/show.json?topic_id=$id");
+    return res.data;
+  }
+
+  Widget _futureBuilder(BuildContext context,AsyncSnapshot snapshot) {
+    if(snapshot.connectionState == ConnectionState.done){
+      return ListView.separated(
+        controller: scrollController,
+        itemCount: snapshot.data.length,
+        itemBuilder: (context,index){
+          return Container(
+            child: ReplyItem(item: snapshot.data[index],index: index),
+          );
+        },
+        separatorBuilder: (context,index){
+          return Divider();
+        },
+        padding: EdgeInsets.fromLTRB(10.0,15.0,10.0,10.0),
+      );
+    }else{
+      return Loading(ifShow: true);
     }
   }
 
@@ -67,23 +73,9 @@ class _ReplyListState extends State<ReplyList> with AutomaticKeepAliveClientMixi
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          ListView.separated(
-            controller: scrollController,
-            itemCount: replyList.length,
-            itemBuilder: (context,index){
-              return Container(
-                child: ReplyItem(item: replyList[index],index: index),
-              );
-            },
-            separatorBuilder: (context,index){
-              return Divider();
-            },
-            padding: EdgeInsets.fromLTRB(10.0,15.0,10.0,10.0),
-          ),
-          Loading(ifShow: ifShow)
-        ],
+      body: FutureBuilder(
+        future: _future,
+        builder: _futureBuilder,
       ),
       floatingActionButton: Opacity(
         opacity: showToTop ? 1 : 0,

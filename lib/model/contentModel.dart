@@ -8,7 +8,6 @@ class ContentModel{
   final int id;
   final String content;
 
-
   ContentModel(this.node,this.member,this.last_reply_by,this.title,this.last_modified,this.replies,this.id,
     this.content
   );

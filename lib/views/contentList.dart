@@ -4,18 +4,16 @@ import '../widgets/contentItem.dart';
 import 'package:dio/dio.dart';
 import '../widgets/loading.dart';
 
-void main()=> runApp(ContentList());
-
 class ContentList extends StatefulWidget {
-  ContentList({Key key}) : super(key: key);
+  final String url;
+  ContentList({Key key,@required this.url}) : super(key: key);
 
   @override
   _ContentListState createState() => _ContentListState();
 }
 
 class _ContentListState extends State<ContentList> with AutomaticKeepAliveClientMixin {
-  List itemList = new List();
-  bool ifShow = false;
+  Future _future;
 
   @override
   bool get wantKeepAlive => true;
@@ -23,72 +21,63 @@ class _ContentListState extends State<ContentList> with AutomaticKeepAliveClient
   @override
   void initState() {
     super.initState();
-    getContentList().then((data){
-      setState(() {
-        ifShow = false;
-        itemList = data;
-      });
-    });
+    _future = getContentList();
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return RefreshIndicator(
-      child: Stack(
-        children: <Widget>[
-          ListView.separated(
-            itemCount: itemList.length,
-            itemBuilder: (context,index){
-              return GestureDetector(
-                child: ContentItem(item: itemList[index]),
-                behavior: HitTestBehavior.opaque,
-                onTap: (){
-                  Navigator.push(context,MaterialPageRoute(
-                    builder: (context){
-                      return ContentDetail(content: itemList[index],);
-                    }
-                  ));
-                },
-              );
-            },
-            separatorBuilder: (context,index){
-              return Divider(
-                height: 5.0,
-                indent: 50.0,
-                color: Color.fromARGB(255, 205, 205, 205),
-              );
-            },
-            padding: EdgeInsets.fromLTRB(10.0,15.0,10.0,10.0),
-          ),
-          Loading(ifShow: ifShow)
-        ],
+      child: FutureBuilder(
+        future: _future,
+        builder: _futureBuilder
       ),
       onRefresh: ()async{
-        getContentList().then((data){
-          setState(() {
-            ifShow = false;
-            itemList = data;
-          });
-        });
+        _future = getContentList();
       },
     );
+  }
+
+  Widget _futureBuilder(BuildContext context,AsyncSnapshot snapshot) {
+    if(snapshot.connectionState == ConnectionState.done){
+      return ListView.separated(
+        itemCount: snapshot.data.length,
+        itemBuilder: (context,index){
+          return GestureDetector(
+            child: ContentItem(item: snapshot.data[index]),
+            behavior: HitTestBehavior.opaque,
+            onTap: (){
+              Navigator.push(context,MaterialPageRoute(
+                builder: (context){
+                  return ContentDetail(content: snapshot.data[index],);
+                }
+              ));
+            },
+          );
+        },
+        separatorBuilder: (context,index){
+          return Divider(
+            height: 5.0,
+            indent: 50.0,
+            color: Color.fromARGB(255, 205, 205, 205),
+          );
+        },
+        padding: EdgeInsets.fromLTRB(10.0,15.0,10.0,10.0),
+      );
+    }else {
+      return Loading(ifShow: true);
+    }
   }
 
   /*
    * 查询当日最新帖子列表
    */
-  Future getContentList() async{
-    setState(() {
-      ifShow = true;
-    });
+  Future<List> getContentList() async{
     Dio dio = new Dio();
-    try{   /// https://www.v2ex.com/api/topics/hot.json 
-      Response res = await dio.get("https://www.v2ex.com/api/topics/latest.json");
-      return res.data;
-    }catch(err){
-      print(err);
-    }
+    // https://www.v2ex.com/api/topics/latest.json
+    Response res = await dio.get(widget.url);
+    print(res.data);
+    return res.data;
   }
 
 }

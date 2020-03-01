@@ -1,14 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:v2ex_flutter/views/contentByNode.dart';
 import '../model/nodeModel.dart';
 
-class NodeItem extends StatelessWidget {
+class NodeItem extends StatefulWidget {
   final item;
   const NodeItem({Key key,@required this.item}) : super(key: key);
 
   @override
+  _NodeListState createState() => _NodeListState();
+
+}
+
+class _NodeListState extends State<NodeItem> with AutomaticKeepAliveClientMixin {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
-    var content = NodeModel.fromJson(item);
+    super.build(context);
+    var content = NodeModel.fromJson(widget.item);
 
     return Container(
       child: Column(
@@ -23,52 +39,29 @@ class NodeItem extends StatelessWidget {
           Container(
             padding: EdgeInsets.only(left: 10,right: 10),
             child: Wrap(
-              spacing: 10.0,
-              // runSpacing: 8.0,
-              alignment: WrapAlignment.start,
-              children: List.generate(content.subNodes.length, (i)=>SubNodes(node: content.subNodes[i]))
+                spacing: 10.0,
+                // runSpacing: 8.0,
+                alignment: WrapAlignment.start,
+                children: List.generate(content.subNodes.length, (i){
+                  return ActionChip(
+                    backgroundColor: Color.fromRGBO(204, 204, 204, 0.5),
+                    label: Text("${content.subNodes[i].title}",textAlign: TextAlign.center,style: TextStyle(color: Color.fromRGBO(102, 102, 102, 1)),),
+                    onPressed:(){
+                      print("print this tap"+content.subNodes[i].name);
+                      String url = 'https://www.v2ex.com/api/topics/show.json?node_name='+content.subNodes[i].name;
+                      Navigator.push(context,MaterialPageRoute(
+                          builder: (context){
+                            return ContentByNode(url: url,title: content.subNodes[i].title,);
+                          }
+                      ));
+                    },
+                  );
+                })
+//              List.generate(content.subNodes.length, (i)=>SubNodes(node: content.subNodes[i]))
             ),
           )
         ],
       ),
     );
   }
-}
-
-class SubNodes extends StatelessWidget {
-  final node;
-  const SubNodes({Key key,@required this.node}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    var subNode = SubNodeModel.fromJson(node);
-    return GestureDetector(
-      child: Chip(
-        backgroundColor: Color.fromRGBO(204, 204, 204, 0.5),
-        label: Text("${subNode.title}",textAlign: TextAlign.center,style: TextStyle(color: Color.fromRGBO(102, 102, 102, 1)),),
-      ),
-      onTap: (){
-        print("print this tap"+subNode.name);
-      },
-    );
-  }
-}
-
-class SubNodeModel{
-  final String name;
-  final String title;
-
-  SubNodeModel(this.name,this.title);
-
-  SubNodeModel.fromJson(Map<String,dynamic> json)
-    :name = json['name'],
-    title = json['title']
-    ;
-
-  Map<String,dynamic> toJson() =>
-  {
-    'name':name,
-    'title':title,
-  };
-
 }
