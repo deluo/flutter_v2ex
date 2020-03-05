@@ -30,13 +30,9 @@ class _NodeListState extends State<NodeList> with AutomaticKeepAliveClientMixin 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Container(
-      child: ListView.builder(
-        itemCount: list.length,
-        itemBuilder: (BuildContext context, int index) {
-          return NodeItem(item: list[index],);
-        }
-      ),
+    return ListView.builder(
+      itemCount: list.length,
+      itemBuilder: (context,index)=>NodeItem(item: list[index],),
     );
   }
 

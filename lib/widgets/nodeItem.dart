@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:v2ex_flutter/views/contentByNode.dart';
+import 'package:v2ex_flutter/views/contentList.dart';
 import '../model/nodeModel.dart';
+
+void main()=>runApp(NodeItem(item: null));
 
 class NodeItem extends StatefulWidget {
   final item;
@@ -40,24 +42,19 @@ class _NodeListState extends State<NodeItem> with AutomaticKeepAliveClientMixin 
             padding: EdgeInsets.only(left: 10,right: 10),
             child: Wrap(
                 spacing: 10.0,
-                // runSpacing: 8.0,
                 alignment: WrapAlignment.start,
-                children: List.generate(content.subNodes.length, (i){
-                  return ActionChip(
+                children: content.subNodes.asMap().entries.map((i)=>ActionChip(
                     backgroundColor: Color.fromRGBO(204, 204, 204, 0.5),
-                    label: Text("${content.subNodes[i].title}",textAlign: TextAlign.center,style: TextStyle(color: Color.fromRGBO(102, 102, 102, 1)),),
+                    label: Text("${i.value.title}",textAlign: TextAlign.center,style: TextStyle(color: Color.fromRGBO(102, 102, 102, 1)),),
                     onPressed:(){
-                      print("print this tap"+content.subNodes[i].name);
-                      String url = 'https://www.v2ex.com/api/topics/show.json?node_name='+content.subNodes[i].name;
+                      String url = 'https://www.v2ex.com/api/topics/show.json?node_name='+i.value.name;
                       Navigator.push(context,MaterialPageRoute(
                           builder: (context){
-                            return ContentByNode(url: url,title: content.subNodes[i].title,);
+                            return ContentList(url: url,title:i.value.title);
                           }
-                      ));
+                      ),);
                     },
-                  );
-                })
-//              List.generate(content.subNodes.length, (i)=>SubNodes(node: content.subNodes[i]))
+                  ),).toList()
             ),
           )
         ],
