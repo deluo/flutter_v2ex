@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import '../model/replyModel.dart';
 import '../utils/date.dart';
 
@@ -6,13 +7,14 @@ class ReplyItem extends StatelessWidget {
   final item;
   final index;
 
-  const ReplyItem({Key key,@required this.item,@required this.index}) : super(key: key);
+  const ReplyItem({Key key, @required this.item, @required this.index})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     var content = ReplyModel.fromJson(item);
 
-    String timeDiff = getTimeDiff(content.last_modified*1000);
+    String timeDiff = getTimeDiff(content.last_modified * 1000);
 
     return Container(
       alignment: Alignment.topLeft,
@@ -21,7 +23,8 @@ class ReplyItem extends StatelessWidget {
         children: <Widget>[
           Container(
             child: CircleAvatar(
-              backgroundImage: NetworkImage("https:"+content.member['avatar_normal']),
+              backgroundImage:
+                  NetworkImage("https:" + content.member['avatar_normal']),
             ),
             margin: EdgeInsets.only(right: 10.0),
           ),
@@ -39,7 +42,11 @@ class ReplyItem extends StatelessWidget {
                         child: Row(
                           children: <Widget>[
                             Container(
-                              child: Text(content.member['username'],style: TextStyle(fontSize: 12,color: Color.fromARGB(225, 122, 122, 122))),
+                              child: Text(content.member['username'],
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color:
+                                          Color.fromARGB(225, 122, 122, 122))),
                               margin: EdgeInsets.only(right: 8.0),
                             ),
                             // Container(
@@ -57,7 +64,12 @@ class ReplyItem extends StatelessWidget {
                         child: Row(
                           children: <Widget>[
                             // Icon(Icons.chat_bubble_outline,size: 13,color: Color.fromARGB(255, 102, 102, 102),),
-                            Text((index+1).toString()+'楼',style: TextStyle(fontSize: 13,color: Color.fromARGB(255, 102, 102, 102)),)
+                            Text(
+                              (index + 1).toString() + '楼',
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  color: Color.fromARGB(255, 102, 102, 102)),
+                            )
                           ],
                         ),
                       )
@@ -66,14 +78,26 @@ class ReplyItem extends StatelessWidget {
                 ),
                 Expanded(
                   flex: 0,
-                  child: Text(content.content,
-                    textAlign: TextAlign.justify,
-                    style: TextStyle(fontSize: 15,color: Color.fromARGB(225, 51, 51, 51),fontWeight: FontWeight.w500)
+                  child: MarkdownBody(
+                    data: content.content,
+                    styleSheet: MarkdownStyleSheet(
+                      h1: TextStyle(fontSize: 18.0,color: Color.fromARGB(225, 51, 51, 51),fontWeight: FontWeight.bold),
+                      h2: TextStyle(fontSize: 17.0,color: Color.fromARGB(225, 51, 51, 51),fontWeight: FontWeight.bold),
+                      h3: TextStyle(fontSize: 16.0,color: Color.fromARGB(225, 51, 51, 51),fontWeight: FontWeight.bold),
+                      h4: TextStyle(fontSize: 15.0,color: Color.fromARGB(225, 51, 51, 51),fontWeight: FontWeight.bold),
+                      h5: TextStyle(fontSize: 14.0,color: Color.fromARGB(225, 51, 51, 51),fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 4),
-                  child: Text("$timeDiff",style: TextStyle(color: Color.fromARGB(255, 174, 174, 174),fontSize: 13)),
+                  child: Text(
+                    "$timeDiff",
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 174, 174, 174),
+                      fontSize: 13,
+                    ),
+                  ),
                 ),
               ],
             ),

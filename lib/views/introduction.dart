@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import '../model/contentModel.dart';
 import '../utils/date.dart';
 
@@ -126,13 +127,13 @@ class _IntroductionState extends State<Introduction> {
             ),
             Container(
               padding: EdgeInsets.fromLTRB(8, 2, 4, 10),
-              child: Text(
-                content.content,
-                textAlign: TextAlign.justify,
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Color.fromARGB(225, 51, 51, 51),
-                  fontWeight: FontWeight.w500,
+              child: MarkdownBody(data: content.content,
+                styleSheet: MarkdownStyleSheet(
+                  h1: TextStyle(fontSize: 18.0,color: Color.fromARGB(225, 51, 51, 51),fontWeight: FontWeight.bold),
+                  h2: TextStyle(fontSize: 17.0,color: Color.fromARGB(225, 51, 51, 51),fontWeight: FontWeight.bold),
+                  h3: TextStyle(fontSize: 16.0,color: Color.fromARGB(225, 51, 51, 51),fontWeight: FontWeight.bold),
+                  h4: TextStyle(fontSize: 15.0,color: Color.fromARGB(225, 51, 51, 51),fontWeight: FontWeight.bold),
+                  h5: TextStyle(fontSize: 14.0,color: Color.fromARGB(225, 51, 51, 51),fontWeight: FontWeight.bold),
                 ),
               ),
             ),
