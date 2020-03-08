@@ -3,8 +3,6 @@ import 'package:flutter/rendering.dart';
 import 'package:v2ex_flutter/views/contentList.dart';
 import '../model/nodeModel.dart';
 
-void main()=>runApp(NodeItem(item: null));
-
 class NodeItem extends StatefulWidget {
   final item;
   const NodeItem({Key key,@required this.item}) : super(key: key);

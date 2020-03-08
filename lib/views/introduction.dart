@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:v2ex_flutter/widgets/webView.dart';
 import '../model/contentModel.dart';
 import '../utils/date.dart';
 
@@ -127,6 +128,7 @@ class _IntroductionState extends State<Introduction> {
             ),
             Container(
               padding: EdgeInsets.fromLTRB(8, 2, 4, 10),
+              alignment: Alignment.topLeft,
               child: MarkdownBody(data: content.content,
                 styleSheet: MarkdownStyleSheet(
                   h1: TextStyle(fontSize: 18.0,color: Color.fromARGB(225, 51, 51, 51),fontWeight: FontWeight.bold),
@@ -134,6 +136,11 @@ class _IntroductionState extends State<Introduction> {
                   h3: TextStyle(fontSize: 16.0,color: Color.fromARGB(225, 51, 51, 51),fontWeight: FontWeight.bold),
                   h4: TextStyle(fontSize: 15.0,color: Color.fromARGB(225, 51, 51, 51),fontWeight: FontWeight.bold),
                   h5: TextStyle(fontSize: 14.0,color: Color.fromARGB(225, 51, 51, 51),fontWeight: FontWeight.bold),
+                ),
+                onTapLink: (url) => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => Browser(url: url),
+                  ),
                 ),
               ),
             ),
